@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Currency & Shopping Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen p-4 md:p-10 font-sans">
+
+<div class="max-w-2xl mx-auto space-y-6">
+    
+    <div class="bg-white rounded-3xl shadow-xl p-8 border border-gray-100">
+        <h1 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+            <span>🌍</span> Currency Converter
+        </h1>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-sm font-medium text-gray-500 mb-2">From</label>
+                <div class="flex gap-2">
+                    <select id="base-currency" class="bg-gray-50 border border-gray-200 rounded-xl px-3 py-3 font-bold text-gray-700 outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="USD">USD</option>
+                        <option value="EUR">EUR</option>
+                        <option value="GBP">GBP</option>
+                        <option value="JPY">JPY</option>
+                        <option value="MYR">MYR</option>
+                    </select>
+                    <input type="number" id="input-amount" value="100" class="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-xl font-bold text-gray-800 outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-500 mb-2">To</label>
+                <div class="flex gap-2">
+                    <select id="target-currency" class="bg-gray-50 border border-gray-200 rounded-xl px-3 py-3 font-bold text-gray-700 outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="EUR">EUR</option>
+                        <option value="USD">USD</option>
+                        <option value="GBP">GBP</option>
+                        <option value="JPY">JPY</option>
+                        <option value="MYR" selected>MYR</option>
+                    </select>
+                    <div id="result-display" class="flex-1 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3 text-xl font-bold text-blue-700 flex items-center">
+                        0.00
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8 pt-6 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="text-sm text-gray-500">
+                Current Rate: <span id="rate-text" class="font-mono font-bold text-gray-700">1.0000</span>
+            </div>
+            <div class="flex items-center gap-3 bg-gray-50 p-2 rounded-lg border border-gray-200">
+                <span class="text-xs font-bold text-gray-400 uppercase">Manual Rate</span>
+                <input type="number" id="manual-rate-input" step="0.0001" placeholder="Override rate..." class="w-24 bg-white border rounded px-2 py-1 text-sm outline-none">
+                <button onclick="fetchRate()" class="text-blue-600 hover:text-blue-800 p-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-indigo-900 rounded-3xl shadow-xl p-8 text-white">
+        <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+            <span>🛍️</span> Shopping Calculator Add-on
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-indigo-300 mb-1">Item Price (Original)</label>
+                    <input type="number" id="shop-price" placeholder="0.00" class="w-full bg-indigo-800 border border-indigo-700 rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-indigo-400">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-indigo-300 mb-1">Discount %</label>
+                        <input type="number" id="shop-discount" value="0" class="w-full bg-indigo-800 border border-indigo-700 rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-indigo-400">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-indigo-300 mb-1">Tax / Voucher (-)</label>
+                        <input type="number" id="shop-voucher" value="0" class="w-full bg-indigo-800 border border-indigo-700 rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-indigo-400">
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-indigo-800 rounded-2xl p-6 flex flex-col justify-center items-center border border-indigo-700">
+                <p class="text-indigo-300 text-sm font-bold uppercase mb-2">You Pay (Converted)</p>
+                <div id="shop-final" class="text-4xl font-black">0.00</div>
+                <p id="shop-detail" class="text-indigo-300 text-xs mt-2 text-center italic"></p>
+            </div>
+        </div>
+    </div>
+
+    <p class="text-center text-gray-400 text-sm italic">Uses real-time rates from Frankfurter.app</p>
+</div>
+
+<script>
+    let currentExchangeRate = 1.0;
+
+    // --- Core Conversion Logic ---
+    async function fetchRate() {
+        const base = document.getElementById('base-currency').value;
+        const target = document.getElementById('target-currency').value;
+        const manualInput = document.getElementById('manual-rate-input');
+
+        try {
+            const res = await fetch(`https://api.frankfurter.dev/v1/latest?base=${base}&symbols=${target}`);
+            const data = await res.json();
+            currentExchangeRate = data.rates[target];
+            manualInput.value = ""; // Clear manual input when fetching fresh data
+            updateUI();
+        } catch (e) {
+            console.error("Rate fetch failed");
+        }
+    }
+
+    function updateUI() {
+        const amount = parseFloat(document.getElementById('input-amount').value) || 0;
+        const manualRate = parseFloat(document.getElementById('manual-rate-input').value);
+        
+        // Use manual rate if user typed one, otherwise use API rate
+        const rate = !isNaN(manualRate) && manualRate > 0 ? manualRate : currentExchangeRate;
+        
+        // 1. Update Main Converter
+        const result = amount * rate;
+        document.getElementById('result-display').textContent = result.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        document.getElementById('rate-text').textContent = rate.toFixed(4);
+
+        // 2. Update Shopping Add-on
+        const shopPrice = parseFloat(document.getElementById('shop-price').value) || 0;
+        const shopDiscount = parseFloat(document.getElementById('shop-discount').value) || 0;
+        const shopVoucher = parseFloat(document.getElementById('shop-voucher').value) || 0;
+
+        // Formula: (Price - Percentage Discount) - Flat Voucher
+        const discountedPrice = (shopPrice * (1 - (shopDiscount / 100))) - shopVoucher;
+        const shopFinalConverted = discountedPrice * rate;
+        const targetCurr = document.getElementById('target-currency').value;
+
+        document.getElementById('shop-final').textContent = `${targetCurr} ${shopFinalConverted.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        
+        if (shopPrice > 0) {
+            document.getElementById('shop-detail').textContent = `Savings: ${((shopPrice - discountedPrice) * rate).toFixed(2)} ${targetCurr}`;
+        } else {
+            document.getElementById('shop-detail').textContent = "";
+        }
+    }
+
+    // --- Listeners ---
+    [
+        'base-currency', 'target-currency', 'input-amount', 
+        'manual-rate-input', 'shop-price', 'shop-discount', 'shop-voucher'
+    ].forEach(id => {
+        document.getElementById(id).addEventListener('input', () => {
+            if (id.includes('currency')) fetchRate();
+            else updateUI();
+        });
+    });
+
+    // Initial load
+    fetchRate();
+</script>
+
+</body>
+</html>
