@@ -2,126 +2,106 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <link rel="apple-touch-icon" href="https://via.placeholder.com/192">
-    
-    <title>Pro Currency & Shopping Tool</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Global Shop & Convert</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom scrollbar for the item list */
+        #items-container::-webkit-scrollbar { width: 4px; }
+        #items-container::-webkit-scrollbar-thumb { background: #475569; border-radius: 10px; }
+    </style>
 </head>
 <body class="bg-gray-100 min-h-screen p-3 md:p-10 font-sans text-gray-900">
 
 <div class="max-w-2xl mx-auto space-y-4 md:space-y-6">
     
-    <div class="bg-white rounded-2xl md:rounded-3xl shadow-xl p-5 md:p-8 border border-gray-100">
-        <h1 class="text-xl md:text-2xl font-bold text-gray-800 mb-4 md:mb-6 flex items-center gap-2">
-            <span>🌍</span> Currency Converter
-        </h1>
-
-        <div class="flex flex-col md:flex-row items-center gap-3 md:gap-4">
-            <div class="w-full">
-                <label class="block text-xs font-medium text-gray-500 mb-1">From</label>
-                <div class="flex gap-2">
-                    <select id="base-currency" class="bg-gray-50 border border-gray-200 rounded-xl px-2 py-3 font-bold text-gray-700 outline-none focus:ring-2 focus:ring-blue-500 text-sm md:text-base">
-                        <option value="USD">USD - US Dollar</option>
-                        <option value="EUR">EUR - Euro</option>
-                        <option value="GBP">GBP - British Pound</option>
-                        <option value="JPY">JPY - Japanese Yen</option>
-                        <option value="MYR">MYR - Malaysian Ringgit</option>
-                        <option value="SGD">SGD - Singapore Dollar</option>
-                        <option value="AUD">AUD - Australian Dollar</option>
-                        <option value="CAD">CAD - Canadian Dollar</option>
-                        <option value="CNY">CNY - Chinese Yuan</option>
-                        <option value="HKD">HKD - Hong Kong Dollar</option>
-                        <option value="IDR">IDR - Indonesian Rupiah</option>
-                        <option value="INR">INR - Indian Rupee</option>
-                        <option value="KRW">KRW - South Korean Won</option>
-                        <option value="THB">THB - Thai Baht</option>
-                        <option value="VND">VND - Vietnamese Dong</option>
-                    </select>
-                    <input type="number" id="input-amount" value="100" class="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-3 py-3 text-lg md:text-xl font-bold text-gray-800 outline-none focus:ring-2 focus:ring-blue-500 w-full">
-                </div>
-            </div>
-
-            <button onclick="swapCurrencies()" class="mt-4 md:mt-5 p-3 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200 transition-all active:scale-95 shadow-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 rotate-90 md:rotate-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                </svg>
-            </button>
-
-            <div class="w-full">
-                <label class="block text-xs font-medium text-gray-500 mb-1">To</label>
-                <div class="flex gap-2">
-                    <select id="target-currency" class="bg-gray-50 border border-gray-200 rounded-xl px-2 py-3 font-bold text-gray-700 outline-none focus:ring-2 focus:ring-blue-500 text-sm md:text-base">
-                        <option value="USD">USD - US Dollar</option>
-                        <option value="EUR">EUR - Euro</option>
-                        <option value="GBP">GBP - British Pound</option>
-                        <option value="JPY">JPY - Japanese Yen</option>
-                        <option value="MYR">MYR - Malaysian Ringgit</option>
-                        <option value="SGD">SGD - Singapore Dollar</option>
-                        <option value="AUD">AUD - Australian Dollar</option>
-                        <option value="CAD">CAD - Canadian Dollar</option>
-                        <option value="CNY">CNY - Chinese Yuan</option>
-                        <option value="HKD">HKD - Hong Kong Dollar</option>
-                        <option value="IDR">IDR - Indonesian Rupiah</option>
-                        <option value="INR">INR - Indian Rupee</option>
-                        <option value="KRW">KRW - South Korean Won</option>
-                        <option value="THB">THB - Thai Baht</option>
-                        <option value="VND">VND - Vietnamese Dong</option>
-                    </select>
-                    <div id="result-display" class="flex-1 bg-blue-50 border border-blue-100 rounded-xl px-3 py-3 text-lg md:text-xl font-bold text-blue-700 flex items-center overflow-hidden">
-                        0.00
-                    </div>
-                </div>
-            </div>
+    <div class="bg-white rounded-2xl shadow-lg p-5 border border-gray-100">
+        <div class="flex justify-between items-center mb-4">
+            <h1 class="text-lg font-bold text-gray-800 flex items-center gap-2"><span>🌍</span> Converter</h1>
+            <div class="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded-full font-bold">LIVE RATE: <span id="rate-text">1.00</span></div>
         </div>
 
-        <div class="mt-6 pt-5 border-t border-gray-100 flex flex-row justify-between items-center gap-2">
-            <div class="text-[10px] md:text-sm text-gray-400">
-                Rate: <span id="rate-text" class="font-mono font-bold text-gray-600">1.0000</span>
+        <div class="flex flex-col md:flex-row items-center gap-3">
+            <div class="w-full flex gap-2">
+                <select id="base-currency" class="bg-gray-50 border rounded-xl px-2 py-3 font-bold text-sm">
+                    <option value="USD">USD - US Dollar</option>
+                    <option value="EUR">EUR - Euro</option>
+                    <option value="GBP">GBP - British Pound</option>
+                    <option value="JPY">JPY - Japanese Yen</option>
+                    <option value="MYR">MYR - Malaysian Ringgit</option>
+                    <option value="SGD">SGD - Singapore Dollar</option>
+                    <option value="AUD">AUD - Australian Dollar</option>
+                    <option value="CAD">CAD - Canadian Dollar</option>
+                    <option value="CNY">CNY - Chinese Yuan</option>
+                    <option value="HKD">HKD - Hong Kong Dollar</option>
+                    <option value="IDR">IDR - Indonesian Rupiah</option>
+                    <option value="INR">INR - Indian Rupee</option>
+                    <option value="KRW">KRW - South Korean Won</option>
+                    <option value="THB">THB - Thai Baht</option>
+                    <option value="VND">VND - Vietnamese Dong</option>
+                </select>
+                <input type="number" id="input-amount" value="100" class="flex-1 bg-gray-50 border rounded-xl px-3 py-3 font-bold text-lg outline-none focus:ring-2 focus:ring-blue-500">
             </div>
-            <div class="flex items-center gap-2 bg-gray-50 p-1.5 rounded-lg border border-gray-200">
-                <input type="number" id="manual-rate-input" step="0.0001" placeholder="Manual Rate" class="w-20 md:w-28 bg-white border rounded px-2 py-1 text-xs outline-none">
-                <button onclick="fetchRate()" class="text-blue-600 hover:text-blue-800 p-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                </button>
+
+            <button onclick="swapCurrencies()" class="p-2 bg-blue-100 text-blue-600 rounded-full active:scale-90 transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 rotate-90 md:rotate-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
+            </button>
+
+            <div class="w-full flex gap-2">
+                <select id="target-currency" class="bg-gray-50 border rounded-xl px-2 py-3 font-bold text-sm">
+                    <option value="USD">USD - US Dollar</option>
+                    <option value="EUR">EUR - Euro</option>
+                    <option value="GBP">GBP - British Pound</option>
+                    <option value="JPY">JPY - Japanese Yen</option>
+                    <option value="MYR">MYR - Malaysian Ringgit</option>
+                    <option value="SGD">SGD - Singapore Dollar</option>
+                    <option value="AUD">AUD - Australian Dollar</option>
+                    <option value="CAD">CAD - Canadian Dollar</option>
+                    <option value="CNY">CNY - Chinese Yuan</option>
+                    <option value="HKD">HKD - Hong Kong Dollar</option>
+                    <option value="IDR">IDR - Indonesian Rupiah</option>
+                    <option value="INR">INR - Indian Rupee</option>
+                    <option value="KRW">KRW - South Korean Won</option>
+                    <option value="THB">THB - Thai Baht</option>
+                    <option value="VND">VND - Vietnamese Dong</option>
+                </select>
+                <div id="result-display" class="flex-1 bg-blue-50 border border-blue-100 rounded-xl px-3 py-3 font-bold text-lg text-blue-700">0.00</div>
             </div>
         </div>
     </div>
 
-    <div class="bg-slate-900 rounded-2xl md:rounded-3xl shadow-xl p-5 md:p-8 text-white">
-        <h2 class="text-lg md:text-xl font-bold mb-4 flex items-center gap-2">
-            <span>🛍️</span> Shopping Calculator
-        </h2>
+    <div class="bg-slate-900 rounded-2xl shadow-xl p-5 md:p-8 text-white">
+        <h2 class="text-lg font-bold mb-4 flex items-center gap-2"><span>🛍️</span> Shopping List</h2>
 
-        <div class="flex flex-col md:grid md:grid-cols-2 gap-4">
-            <div class="space-y-3">
-                <div>
-                    <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Item Price</label>
-                    <input type="number" id="shop-price" placeholder="Enter Price" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-blue-400 text-base">
-                </div>
-                
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Discount %</label>
-                        <input type="number" id="shop-discount" value="0" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white outline-none text-base">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Voucher (-)</label>
-                        <input type="number" id="shop-voucher" value="0" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white outline-none text-base">
-                    </div>
-                </div>
+        <div class="flex gap-2 mb-6">
+            <input type="number" id="item-input" placeholder="Price (Base)" class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-blue-500">
+            <button onclick="addItem()" class="bg-blue-600 hover:bg-blue-500 px-6 py-3 rounded-xl font-bold transition-all active:scale-95">+</button>
+        </div>
+
+        <div id="items-container" class="space-y-2 max-h-48 overflow-y-auto mb-6 pr-2">
             </div>
 
-            <div class="bg-slate-800 rounded-xl p-5 flex flex-col justify-center items-center border border-slate-700 mt-2 md:mt-0">
-                <p class="text-slate-400 text-[10px] font-bold uppercase mb-1">Final Price</p>
-                <div id="shop-final" class="text-2xl md:text-3xl font-black text-blue-400">0.00</div>
-                <p id="shop-detail" class="text-slate-500 text-[10px] mt-1 text-center italic"></p>
+        <div class="grid grid-cols-2 gap-3 pt-4 border-t border-slate-800">
+            <div>
+                <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Total Discount %</label>
+                <input type="number" id="shop-discount" value="0" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white outline-none">
+            </div>
+            <div>
+                <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Voucher Value (-)</label>
+                <input type="number" id="shop-voucher" value="0" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white outline-none">
+            </div>
+        </div>
+
+        <div class="mt-6 bg-slate-800 rounded-xl p-5 border border-slate-700">
+            <div class="flex justify-between text-xs text-slate-400 mb-1">
+                <span>Subtotal (Base)</span>
+                <span id="base-subtotal">0.00</span>
+            </div>
+            <div class="flex justify-between text-xl font-black text-white">
+                <span>Final Total</span>
+                <span id="shop-final" class="text-blue-400">0.00</span>
             </div>
         </div>
     </div>
@@ -129,73 +109,99 @@
 
 <script>
     let currentExchangeRate = 1.0;
+    let shoppingList = [];
 
-    // --- Core Logic ---
+    // --- CURRENCY LOGIC ---
     async function fetchRate() {
         const base = document.getElementById('base-currency').value;
         const target = document.getElementById('target-currency').value;
-        const manualInput = document.getElementById('manual-rate-input');
-
         try {
             const res = await fetch(`https://api.frankfurter.dev/v1/latest?base=${base}&symbols=${target}`);
             const data = await res.json();
             currentExchangeRate = data.rates[target];
-            manualInput.value = ""; 
             updateUI();
-        } catch (e) {
-            console.error("Rate fetch failed");
-        }
+        } catch (e) { console.error("Rate fetch failed"); }
     }
 
-    // --- SWAP FUNCTION ---
     function swapCurrencies() {
-        const baseSelect = document.getElementById('base-currency');
-        const targetSelect = document.getElementById('target-currency');
-        
-        // Swap values
-        const temp = baseSelect.value;
-        baseSelect.value = targetSelect.value;
-        targetSelect.value = temp;
-
-        // Fetch new rate based on swapped currencies
+        const base = document.getElementById('base-currency');
+        const target = document.getElementById('target-currency');
+        const temp = base.value;
+        base.value = target.value;
+        target.value = temp;
         fetchRate();
     }
 
-    function updateUI() {
-        const amount = parseFloat(document.getElementById('input-amount').value) || 0;
-        const manualRate = parseFloat(document.getElementById('manual-rate-input').value);
-        const rate = !isNaN(manualRate) && manualRate > 0 ? manualRate : currentExchangeRate;
-        
-        const result = amount * rate;
-        document.getElementById('result-display').textContent = result.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-        document.getElementById('rate-text').textContent = rate.toFixed(4);
-
-        const shopPrice = parseFloat(document.getElementById('shop-price').value) || 0;
-        const shopDiscount = parseFloat(document.getElementById('shop-discount').value) || 0;
-        const shopVoucher = parseFloat(document.getElementById('shop-voucher').value) || 0;
-
-        const discountedPrice = (shopPrice * (1 - (shopDiscount / 100))) - shopVoucher;
-        const shopFinalConverted = discountedPrice * rate;
-        const targetCurr = document.getElementById('target-currency').value;
-
-        document.getElementById('shop-final').textContent = `${targetCurr} ${shopFinalConverted.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-        
-        if (shopPrice > 0) {
-            document.getElementById('shop-detail').textContent = `Savings: ${((shopPrice - discountedPrice) * rate).toFixed(2)} ${targetCurr}`;
-        } else {
-            document.getElementById('shop-detail').textContent = "";
+    // --- SHOPPING LIST LOGIC ---
+    function addItem() {
+        const input = document.getElementById('item-input');
+        const value = parseFloat(input.value);
+        if (!isNaN(value) && value > 0) {
+            shoppingList.push(value);
+            input.value = "";
+            renderList();
+            updateUI();
         }
     }
 
-    // --- Listeners ---
-    [
-        'base-currency', 'target-currency', 'input-amount', 
-        'manual-rate-input', 'shop-price', 'shop-discount', 'shop-voucher'
-    ].forEach(id => {
+    function removeItem(index) {
+        shoppingList.splice(index, 1);
+        renderList();
+        updateUI();
+    }
+
+    function renderList() {
+        const container = document.getElementById('items-container');
+        const baseCurr = document.getElementById('base-currency').value;
+        
+        container.innerHTML = shoppingList.map((price, index) => `
+            <div class="flex justify-between items-center bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 group">
+                <span class="text-sm font-medium text-slate-300">Item ${index + 1}: <span class="text-white font-bold">${baseCurr} ${price.toFixed(2)}</span></span>
+                <button onclick="removeItem(${index})" class="text-slate-500 hover:text-red-400 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                </button>
+            </div>
+        `).join('');
+    }
+
+    // --- GLOBAL UPDATE ---
+    function updateUI() {
+        const amount = parseFloat(document.getElementById('input-amount').value) || 0;
+        const targetCurr = document.getElementById('target-currency').value;
+        const baseCurr = document.getElementById('base-currency').value;
+
+        // Update Converter
+        const convResult = amount * currentExchangeRate;
+        document.getElementById('result-display').textContent = convResult.toLocaleString(undefined, {minimumFractionDigits: 2});
+        document.getElementById('rate-text').textContent = currentExchangeRate.toFixed(4);
+
+        // Update Shopping Total
+        const subtotal = shoppingList.reduce((acc, curr) => acc + curr, 0);
+        const discountPerc = parseFloat(document.getElementById('shop-discount').value) || 0;
+        const voucher = parseFloat(document.getElementById('shop-voucher').value) || 0;
+
+        const discountedAmount = (subtotal * (1 - (discountPerc / 100))) - voucher;
+        const finalConverted = Math.max(0, discountedAmount * currentExchangeRate);
+
+        document.getElementById('base-subtotal').textContent = `${baseCurr} ${subtotal.toFixed(2)}`;
+        document.getElementById('shop-final').textContent = `${targetCurr} ${finalConverted.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+    }
+
+    // --- EVENT LISTENERS ---
+    ['base-currency', 'target-currency', 'input-amount', 'shop-discount', 'shop-voucher'].forEach(id => {
         document.getElementById(id).addEventListener('input', () => {
-            if (id.includes('currency')) fetchRate();
-            else updateUI();
+            if (id.includes('currency')) {
+                fetchRate();
+                renderList(); // re-render to update currency labels
+            } else {
+                updateUI();
+            }
         });
+    });
+
+    // Support "Enter" key for adding items
+    document.getElementById('item-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') addItem();
     });
 
     fetchRate();
